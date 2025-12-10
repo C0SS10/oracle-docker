@@ -53,8 +53,6 @@ checkContainerRuntime() {
 
   if "${CONTAINER_RUNTIME}" info | grep -i -q buildahversion; then
     checkPodmanVersion
-  else
-    checkDockerVersion
   fi
 }
 
