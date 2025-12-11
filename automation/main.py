@@ -1,17 +1,23 @@
+from pathlib import Path
 from drive.drive_service import DriveService
 from workflows.folder_workflow import FolderWorkflow
 from config.settings import settings
 
 
 def main():
-    drive = DriveService(settings.GOOGLE_CREDENTIALS)
+    drive_service = DriveService(settings.GOOGLE_CREDENTIALS)
 
-    folders = drive.get_folders(settings.GOOGLE_PARENT_ID)
+    folders = drive_service.get_folders(settings.GOOGLE_PARENT_ID)
     if not folders:
         print("⚠️ No se encontraron carpetas.")
         return
 
-    workflow = FolderWorkflow(drive, settings.BASE_DUMP)
+    project_root = Path(__file__).resolve().parents[1]
+    workflow = FolderWorkflow(
+        drive=drive_service,
+        base_dump=Path.home() / "dump",
+        project_root=project_root
+    )
 
     for folder in folders:
         workflow.process_folder(folder)
