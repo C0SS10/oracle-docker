@@ -32,4 +32,4 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
-.config.env
+config.env
