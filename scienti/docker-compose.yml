@@ -1,7 +1,17 @@
-version: '2'
+version: "2"
 services:
+  mongodb:
+    image: mongo:4.4
+    container_name: scienti-mongo
+    networks:
+      - scienti-network
+    volumes:
+      - mongo_data:/data/db
+
   oracle-docker:
     image: colav/oracle-scienti-docker:latest
+    networks:
+      - scienti-network
     volumes:
       - ${DUMP_PATH}:/home/oracle/dump # dump path (where the file .dmp resides).
     ports:
@@ -10,8 +20,18 @@ services:
       #- 8080:8080  # required by oracle apex (commented because we dont need apex)
       - $HUNABKU_PORT:$HUNABKU_PORT
     env_file:
-      - config.env   # WARNING!!!!  CREATE THIS FILE BEFORE LAUNCH!
+      - config.env # WARNING!!!!  CREATE THIS FILE BEFORE LAUNCH!
     environment:
+      - MONGO_DBURI=mongodb://mongodb:27017/
       - ORACLE_PWD=${ORACLE_PWD}
     mem_reservation: 8000M
     cpuset: "0-7"
+    depends_on:
+      - mongodb
+
+networks:
+  scienti-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
