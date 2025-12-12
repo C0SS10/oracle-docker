@@ -2,10 +2,9 @@ from pathlib import Path
 
 class EnvGenerator:
     @staticmethod
-    def create(prefix: str, date: str, dump_files: list[str], project_root: Path):
+    def create(prefix: str, date: str, dump_files: list[str], project_root: Path, dump_folder: Path):
         dump_files_joined = ",".join(dump_files)
-        home_name = Path.home().as_posix()
-        dump_abs = f"{home_name}/dump"
+        dump_abs = dump_folder.as_posix()
 
         env_content = f"""#!/bin/bash
 
