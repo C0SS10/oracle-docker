@@ -1,8 +1,8 @@
 from pathlib import Path
 
+from commands.wait_for_complete_command import WaitForKaypachaCommand
 from commands.docker_down_command import DockerDownCommand
 from commands.docker_up_command import DockerUpCommand
-from commands.kaypacha_command import SqlToMongoCommand
 from orchestrator.command_executor import CommandExecutor
 from drive.drive_service import DriveService
 from processors.config_env_generator import EnvGenerator
@@ -54,6 +54,7 @@ class FolderWorkflow:
             date=date,
             dump_files=dump_files,
             project_root=Path(__file__).resolve().parents[2],
+            dump_folder=local_folder,
         )
 
         if env_file:
@@ -62,7 +63,7 @@ class FolderWorkflow:
             compose_file = self.project_root / "scienti" / "docker-compose.yml"
 
             executor.add(DockerUpCommand(compose_file=compose_file, env_file=env_file))
-            executor.add(SqlToMongoCommand(prefix=prefix, dump_date=date))
+            executor.add(WaitForKaypachaCommand(container_name="scienti-oracle-docker-1"))
             executor.add(DockerDownCommand(compose_file=compose_file, env_file=env_file))
 
             executor.run()
